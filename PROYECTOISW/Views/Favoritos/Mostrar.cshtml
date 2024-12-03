@@ -1,0 +1,57 @@
+﻿@model List<PROYECTOISW.Models.Propiedade>
+<h2>Favoritos</h2>
+<div id="propiedades-container" class="d-flex flex-wrap justify-content-between">
+    @foreach (var p in Model)
+    {
+        <div class="form-container propiedad-card" data-id="@p.IdPropiedad">
+            @{
+                var base64 = Convert.ToBase64String(p.Imagenes.FirstOrDefault()?.Imagen ?? new byte[0]);
+
+                var imgSrc = $"data:image/jpeg;base64,{base64}";
+            }
+            <a href="@Url.Action("Detalles", "Busqueda", new { id = p.IdPropiedad })" target="_blank">
+                <img src="@imgSrc" alt="Imagen de la propiedad" class="image-center" />
+            </a>
+            <div class="card-custom">
+                <h5 class="card-title">@p.Titulo</h5>
+                <p class="card-text">@p.Descripcion</p>
+                <a href="@Url.Action("Detalles", "Busqueda", new { id = p.IdPropiedad })" class="btn btn-primary">Ver más</a>
+                <a href="javascript:void(0);" onclick="confirmarEliminar(@p.IdPropiedad)" class="btn btn-danger mt-2">
+                    Quitar
+                </a>
+
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts
+{
+    <script>
+            function confirmarEliminar(idPropiedad) {
+            if (confirm('¿Estás seguro de que deseas eliminar este favorito?')) {
+                eliminarFavorito(idPropiedad);
+            }
+        }
+
+        function eliminarFavorito(idPropiedad) {
+            $.ajax({
+                url: '@Url.Action("Eliminar", "Favoritos")',
+                type: 'POST',
+                data: { idPropiedad: idPropiedad },
+                success: function (result) {
+                    if (result.success) {
+                        // Eliminar la tarjeta de la propiedad de la vista
+                        $('.propiedad-card[data-id="' + idPropiedad + '"]').remove();
+                        alert('Favorito eliminado exitosamente.');
+                    } else {
+                        alert('No se pudo eliminar el favorito.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('Ocurrió un error: ' + error);
+                }
+            });
+        }
+    </script>
+}

@@ -1,0 +1,27 @@
+﻿@model PROYECTOISW.Models.ViewModel.PerfilViewModel.CambiarImagenViewModel
+
+    <form asp-action="CambiarImagen" asp-controller="Usuario" method="post" enctype="multipart/form-data">
+        <!--Recibe el Id del usuario-->
+        <input asp-for="Id" type="hidden"/>
+        <div class="mb-5">
+            <label asp-for="Imagen" class="form-label"></label>
+            <input asp-for="Imagen" class="form-control" type="file" accept="image/*" />
+        </div>
+        <div class="mb-5">
+            <button type="submit" class="btn btn-warning">Cambiar</button>
+        </div>
+    </form>
+    <!-- Mensaje de error -->
+    @if (!string.IsNullOrEmpty(ViewBag.Invalido))
+    {
+        <div class="alert alert-danger mt-3" role="alert">
+            @ViewBag.Invalido
+        </div>
+    }
+
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

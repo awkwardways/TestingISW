@@ -1,0 +1,112 @@
+﻿@* @model PROYECTOISW.Models.ViewModel.PerfilViewModel.UsuarioViewModel *@
+@using Microsoft.AspNetCore.Identity
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PROYECTOISW</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-grid.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/PROYECTOISW.styles.css" asp-append-version="true" />
+    <style>
+        .nav-link .bi-search {
+            color: green; /* Color oscuro */
+            width: 50px;
+            height: 50px;
+        }
+        /* CSS */
+        .nav-item .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: #f8f9fa;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .nav-item:hover .dropdown-menu {
+            display: block;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>    
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $.ajax({
+                url: '@Url.Action("CheckAlquiladas", "Home")',
+                type: 'GET',
+                success: function(data) {
+                    if (data.tienePropiedadesAlquiladas) {
+                        $('#alquiladas-link').show();
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="contenedor">
+        <div class="miHeader">
+            <nav class="navbar navbar-expand-md navbar-light bg-light">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse flex-column" id="navbarNav">
+                        <img src="@Url.Action("ObtenerImagen", "Usuario")" alt="Foto de perfil" class="miImagen" />
+                        <h5 class="mt-5 mb-5">@User.Identity.Name</h5>
+                        <ul class="navbar-nav flex-column">
+                            <!-- Evalua el rol del usuario -->
+                            @if (User.IsInRole("A"))
+                            {
+                                <li class="nav-item ms-auto">
+                                    <!-- ms-auto alinea el elemento a la derecha -->
+                                    <a href="@Url.Action("Busqueda", "Busqueda")" class="nav-link text-dark">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                                        </svg>
+                                        Buscar Propiedades <!-- Texto a la derecha del ícono -->
+                                    </a>
+                                </li>
+                                <li class="nav-item" id="alquiladas-link" style="display:none;">
+                                    <a href="@Url.Action("Rentadas", "Busqueda")" class="nav-link text-dark">Propiedades Alquiladas</a>
+                                </li>
+                              @*   <li class="nav-item"><a href="@Url.Action("Rentadas", "Busqueda")" class="nav-link text-dark">Propiedades Alquiladas</a></li> *@
+
+                                <li class="nav-item"><a href="@Url.Action("Mostrar", "Favoritos")" class="nav-link text-dark">Favoritos</a></li>
+                            }
+                            else if (User.IsInRole("P"))
+                            {
+                                <li class="nav-item"><a href="@Url.Action("CrearPropiedad", "Propiedades")" class="nav-link text-dark">Agregar Propiedad</a></li>
+                                <li class="nav-item"><a href="@Url.Action("GestionarPropiedades", "Propiedades")" class="nav-link text-dark">Gestionar Propiedades</a></li>
+                            }
+                            <!-- Configuracion del perfil -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Configuración de perfil
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="@Url.Action("CambiarContraseña", "Usuario")">Actualizar Contraseña</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("CambiarCorreo", "Usuario")">Actualizar Correo</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("CambiarTelefono", "Usuario")">Actualizar Teléfono</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item"><a href="@Url.Action("CerrarSesion","Usuario")" class="nav-link text-dark">Cerrar Sesión</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="miMain container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
